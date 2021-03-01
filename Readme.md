@@ -7,7 +7,7 @@ Simple youtube downloader made using [pytube](https://github.com/pytube/pytube) 
 - python
 - pytube
 
-First, you need to install python, you can install it from [python downloads] (https://www.python.org/downloads/).
+First, you need to install python, you can install it from [python downloads](https://www.python.org/downloads/).
 
 Then, you need to install pytube, Use the package manager [pip](https://pip.pypa.io/en/stable/) to install [pytube](https://github.com/pytube/pytube).
 
