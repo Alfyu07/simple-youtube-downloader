@@ -1,4 +1,5 @@
 import os
+import sys
 from pytube import YouTube
 from pytube import Playlist
 
@@ -61,7 +62,7 @@ if __name__ == "__main__":
   
   if not os.path.isdir(downloader.SAVE_PATH):
     print("Folder not Exist")
-    exit
+    sys.exit()
   
   print("Simple Youtube Downloader ")
   print("1. Single Download")
