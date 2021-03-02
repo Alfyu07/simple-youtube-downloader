@@ -7,16 +7,21 @@ class Downloader:
   def __init__(self):
     #enter save directory here
     self.SAVE_PATH = '/home/alfyu/Unduhan/pytube/'
+    self.DOWNLOAD_PLAYLIST = False
     self.DOWNLOAD_WITH_CAPTION= False
-
-  def singleDownload(self,link):
+    self.yt = None
+    self.p = None
+  
+  def singleDownload(self,link, index = ''):
     try:
-      yt = YouTube(link)
-      video = yt.streams.get_highest_resolution()
-      print(yt.title + ".mp4")
-      video.download(self.SAVE_PATH)
+      self.yt = YouTube(link)
+      video = self.yt.streams.get_highest_resolution()
+      filename = index+'. '+ self.yt.title
+      
+      print(filename + " Downloading...")
+      video.download(self.SAVE_PATH, filename = filename)
       if(self.DOWNLOAD_WITH_CAPTION):
-        self.captionDownload(yt)
+        self.captionDownload(filename)
       return True
     except:
       print("Connection Error")
@@ -24,30 +29,23 @@ class Downloader:
 
   def playlistDownload(self, link):
     #create playlist object
-    p = Playlist(link)
-    print("creating " + p.title + " folder at " + self.SAVE_PATH)
-    
-    self.SAVE_PATH = self.SAVE_PATH + p.title
+    self.p = Playlist(link)
+    print("creating " + self.p.title + " folder at " + self.SAVE_PATH)
+    self.SAVE_PATH = self.SAVE_PATH + self.p.title
     if not os.path.isdir(self.SAVE_PATH):
       os.mkdir(self.SAVE_PATH)
     
     print("Start Downloading...")
-    for index, url in enumerate(p.video_urls):
-      yt = YouTube(url)
-      print(str(index) + ". " + yt.title + " Downloading...")
-      
-      self.singleDownload(url)
-      if(self.DOWNLOAD_WITH_CAPTION):
-        self.captionDownload(yt)
+    for index, url in enumerate(self.p.video_urls):
+      self.singleDownload(url, index=str(index))
       print("Video Downloaded")
-    
     return True
   
-  def captionDownload(self,yt):
-    completeName = os.path.join(self.SAVE_PATH,yt.title+'.srt')
+  def captionDownload(self, filename):
+    completeName = os.path.join(self.SAVE_PATH,filename+'.srt')
     # print(completeName)
     try:
-      caption = yt.captions['a.en']
+      caption = self.yt.captions['a.en']
       subtitle = open(completeName, 'w')
       subtitle.write(caption.generate_srt_captions())
       subtitle.close()
@@ -76,6 +74,7 @@ if __name__ == "__main__":
   if(selectedIndex == 1):
     url = input("Enter video url : ")
     try :
+      downloader.DOWNLOAD_PLAYLIST = False
       print("Downloading...")
       finish = downloader.singleDownload(url)
     except:
@@ -83,6 +82,7 @@ if __name__ == "__main__":
   else:
     url = input("Enter playlist url : ")
     try:
+      downloader.DOWNLOAD_PLAYLIST = True
       finish = downloader.playlistDownload(url)
     except:
       print("unknown error")
